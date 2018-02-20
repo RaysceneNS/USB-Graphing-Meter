@@ -10,7 +10,6 @@ namespace Foresight.GraphingMeter
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly System.Windows.Forms.Timer _timer;
         private int _prevSamplesReceived;
-        private int _sampleRate;
         private int _samplesReceived;
 
         /// <summary>
@@ -30,29 +29,11 @@ namespace Foresight.GraphingMeter
             _timer.Tick += Timer_Tick;
             _timer.Start();
         }
-
-
-        /// <summary>
-        /// Number of packets received.
-        /// </summary>
-        public int SamplesReceived
-        {
-            get
-            {
-                return _samplesReceived;
-            }
-        }
-
+        
         /// <summary>
         /// Sample receive rate as packets per second.
         /// </summary>
-        public int SampleRate
-        {
-            get
-            {
-                return _sampleRate;
-            }
-        }
+        public int SampleRate { get; private set; }
 
         /// <summary>
         /// Increments packet counter.
@@ -62,12 +43,14 @@ namespace Foresight.GraphingMeter
             _samplesReceived++;
         }
 
-        // Zeros packet counter.
+        /// <summary>
+        /// Reset packet rate counter
+        /// </summary>
         public void Reset()
         {
             _prevSamplesReceived = 0;
             _samplesReceived = 0;
-            _sampleRate = 0;
+            SampleRate = 0;
         }
 
         /// <summary>
@@ -75,8 +58,8 @@ namespace Foresight.GraphingMeter
         /// </summary>
         private void Timer_Tick(object sender, EventArgs e)
         {
-            _sampleRate = SamplesReceived - _prevSamplesReceived;
-            _prevSamplesReceived = SamplesReceived;
+            SampleRate = _samplesReceived - _prevSamplesReceived;
+            _prevSamplesReceived = _samplesReceived;
         }
     }
 }

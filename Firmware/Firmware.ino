@@ -5,9 +5,10 @@ void setup() {
 }
 
 void loop() {
+  //poll usb 
   DigiUSB.refresh();
-  //print output
-  float value = analogRead(1); //This is Pin3
+  
+  int value = analogRead(1); //This is Pin3
   if(value>1020)
     value = 255;
   else if(value<2)

@@ -81,8 +81,7 @@ namespace Foresight.GraphingMeter
                 return;
             }
 
-            IUsbDevice wholeUsbDevice = _myUsbDevice as IUsbDevice;
-            if (!(wholeUsbDevice is null))
+            if (_myUsbDevice is IUsbDevice wholeUsbDevice)
             {
                 // This is a "whole" USB device. Before it can be used, 
                 // the desired configuration and interface must be selected.
@@ -111,12 +110,11 @@ namespace Foresight.GraphingMeter
 
         private void Start()
         {
-            byte REQUEST_TYPE_RECEIVE = (0x01 << 5) | 0x80;
-            const byte USBRQ_HID_GET_REPORT = 0x01;
-            const byte USB_HID_REPORT_TYPE_FEATURE = 0x03;
-            short val = (USB_HID_REPORT_TYPE_FEATURE << 8);
+            byte requestType = (0x01 << 5) | 0x80;
+            const byte request = 0x01;
+            short val = 0x03 << 8;
             byte[] readBuffer = new byte[512];
-            var packet = new UsbSetupPacket(REQUEST_TYPE_RECEIVE, USBRQ_HID_GET_REPORT, val, 0, 1);
+            var packet = new UsbSetupPacket(requestType, request, val, 0, 1);
 
             while (true)
             {
@@ -147,7 +145,7 @@ namespace Foresight.GraphingMeter
             for (var index = 0; index < count; index++)
             {
                 byte b = buff[index];
-                float volts = b / 53.6842f;
+                float volts = b / 51.0f;
                 series.Points.AddY(volts);
                 series.Points.RemoveAt(0);
 
@@ -172,12 +170,9 @@ namespace Foresight.GraphingMeter
                         // 'wholeUsbDevice' variable will be null indicating this is 
                         // an interface of a device; it does not require or support 
                         // configuration and interface selection.
-                        IUsbDevice wholeUsbDevice = _myUsbDevice as IUsbDevice;
-                        if (!ReferenceEquals(wholeUsbDevice, null))
-                        {
-                            // Release interface #0.
-                            wholeUsbDevice.ReleaseInterface(0);
-                        }
+                        var wholeUsbDevice = _myUsbDevice as IUsbDevice;
+                        // Release interface #0.
+                        wholeUsbDevice?.ReleaseInterface(0);
                         _myUsbDevice.Close();
                     }
                 }
@@ -186,6 +181,7 @@ namespace Foresight.GraphingMeter
             }
             catch
             {
+                // ignored
             }
         }
 
