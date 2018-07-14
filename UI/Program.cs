@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Foresight.GraphingMeter
+namespace GraphingMeter
 {
     internal static class Program
     {

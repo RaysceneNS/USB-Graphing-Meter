@@ -5,7 +5,7 @@ using LibUsbDotNet;
 using LibUsbDotNet.Main;
 using Timer = System.Windows.Forms.Timer;
 
-namespace Foresight.GraphingMeter
+namespace GraphingMeter
 {
     public partial class FormMain : Form
     {
@@ -23,9 +23,12 @@ namespace Foresight.GraphingMeter
         public FormMain()
         {
             InitializeComponent();
-        }
 
-        #region Form 
+            // Setup form update timer
+            _formUpdateTimer.Interval = 500;
+            _formUpdateTimer.Tick += FormUpdateTimer_Tick;
+            _formUpdateTimer.Start();
+        }
 
         /// <summary>
         /// From load event.
@@ -35,11 +38,6 @@ namespace Foresight.GraphingMeter
             // Attempt to find the usb device
             FindUsbDevice();
             
-            // Setup form update timer
-            _formUpdateTimer.Interval = 40;
-            _formUpdateTimer.Tick += FormUpdateTimer_Tick;
-            _formUpdateTimer.Start();
-
             //fill in the x axis
             for (int i = 0; i < 1000; i++)
             {
@@ -64,17 +62,13 @@ namespace Foresight.GraphingMeter
             toolStripStatusLabelSampleRate.Text = "Sample Rate: " + _sampleCounter.SampleRate;
         }
 
-        #endregion
-
-        #region Usb Device Acccess
-
         /// <summary>
         /// Locates the usb device 
         /// </summary>
         private void FindUsbDevice()
         {
             // Find and open the usb device.
-            UsbDeviceFinder usbFinder = new UsbDeviceFinder(Vid, Pid);
+            var usbFinder = new UsbDeviceFinder(Vid, Pid);
             _myUsbDevice = UsbDevice.OpenUsbDevice(usbFinder);
             if (_myUsbDevice == null)
             {
@@ -184,7 +178,5 @@ namespace Foresight.GraphingMeter
                 // ignored
             }
         }
-
-        #endregion
     }
 }

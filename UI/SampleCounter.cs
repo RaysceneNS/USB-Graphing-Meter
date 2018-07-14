@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Foresight.GraphingMeter
+namespace GraphingMeter
 {
     /// <summary>
     /// Sample counter. Tracks number of packets received and packet rate.

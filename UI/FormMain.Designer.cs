@@ -1,4 +1,4 @@
-﻿namespace Foresight.GraphingMeter
+﻿namespace GraphingMeter
 {
     partial class FormMain
     {
